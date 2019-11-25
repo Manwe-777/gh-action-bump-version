@@ -16,11 +16,11 @@ Toolkit.run(async tools => {
   }
 
   let version = 'patch'
-  if (messages.map(message => message.includes('BREAKING CHANGE')).includes(true)) {
+  if (messages.map(message => message.includes('breaking')).includes(true)) {
     version = 'major'
-  } else if (messages.map(message => message.toLowerCase().startsWith('feat')).includes(true)) {
+  if (messages.map(message => message.includes('feature')).includes(true)) {
     version = 'minor'
-  }
+
 
   try {
     const current = pkg.version.toString()
