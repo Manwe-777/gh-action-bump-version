@@ -23,12 +23,11 @@ Toolkit.run(async tools => {
     version = 'minor'
   }
 
-
   try {
     const current = pkg.version.toString()
     // set git user
-    await tools.runInWorkspace('git', ['config', 'user.name', '"Automated Version Bump"'])
-    await tools.runInWorkspace('git', ['config', 'user.email', '"gh-action-bump-version@users.noreply.github.com"'])
+    await tools.runInWorkspace('git', ['config', 'user.name', '"mtgatool"'])
+    await tools.runInWorkspace('git', ['config', 'user.email', '"mtgatool@gmail.com"'])
 
     const currentBranch = /refs\/[a-zA-Z]+\/(.*)/.exec(process.env.GITHUB_REF)[1]
     console.log('currentBranch:', currentBranch)
