@@ -52,14 +52,9 @@ Toolkit.run(async tools => {
     ]);
     console.log("current:", current, "/", "version:", version);
 
-    const newVersion = "";
-    if (parseInt(current).toString() !== current) {
-      newVersion = (parseInt(current) + 1).toString();
-    } else {
-      newVersion = execSync(`npm version --git-tag-version=false ${version}`)
-        .toString()
-        .trim();
-    }
+    let newVersion = execSync(`npm version --git-tag-version=false ${version}`)
+      .toString()
+      .trim();
     newVersion = `${process.env["INPUT_TAG-PREFIX"]}${newVersion}`;
     console.log("new version:", newVersion);
 
