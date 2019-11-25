@@ -18,8 +18,10 @@ Toolkit.run(async tools => {
   let version = 'patch'
   if (messages.map(message => message.includes('breaking')).includes(true)) {
     version = 'major'
+  }
   if (messages.map(message => message.includes('feature')).includes(true)) {
     version = 'minor'
+  }
 
 
   try {
