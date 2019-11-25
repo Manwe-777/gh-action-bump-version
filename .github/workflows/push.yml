@@ -21,8 +21,8 @@ jobs:
         uses: "actions/setup-node@v1"
         with:
           node-version: 8.10.0
-      - name: "Automated Version Bump"
-        uses: "phips28/gh-action-bump-version@master"
+      - name: "Version Bump"
+        uses: "Manuel-777/gh-action-bump-version@master"
         with:
           tag-prefix: ''
         env:
