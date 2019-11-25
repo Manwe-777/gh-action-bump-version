@@ -53,7 +53,7 @@ Toolkit.run(async tools => {
     const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`
     // console.log(Buffer.from(remoteRepo).toString('base64'))
     await tools.runInWorkspace('git', ['tag', newVersion])
-    await tools.runInWorkspace('git', ['push', remoteRepo, '--follow-tags'])
+    //await tools.runInWorkspace('git', ['push', remoteRepo, '--follow-tags'])
     await tools.runInWorkspace('git', ['push', remoteRepo, '--tags'])
   } catch (e) {
     tools.log.fatal(e)
