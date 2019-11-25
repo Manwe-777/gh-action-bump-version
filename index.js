@@ -34,11 +34,13 @@ Toolkit.run(async tools => {
 
     // do it in the current checked out github branch (DETACHED HEAD)
     // important for further usage of the package.json version
+    /*
     await tools.runInWorkspace('npm',
       ['version', '--allow-same-version=true', '--git-tag-version=false', current])
     console.log('current:', current, '/', 'version:', version)
     let newVersion = execSync(`npm version --git-tag-version=false ${version}`).toString().trim()
     await tools.runInWorkspace('git', ['commit', '-a', '-m', `"ci: ${commitMessage} ${newVersion}"`])
+    */
 
     // now go to the actual branch to perform the same versioning
     await tools.runInWorkspace('git', ['checkout', currentBranch])
@@ -53,7 +55,7 @@ Toolkit.run(async tools => {
     const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`
     // console.log(Buffer.from(remoteRepo).toString('base64'))
     await tools.runInWorkspace('git', ['tag', newVersion])
-    //await tools.runInWorkspace('git', ['push', remoteRepo, '--follow-tags'])
+    await tools.runInWorkspace('git', ['push', remoteRepo, '--follow-tags'])
     await tools.runInWorkspace('git', ['push', remoteRepo, '--tags'])
   } catch (e) {
     tools.log.fatal(e)
