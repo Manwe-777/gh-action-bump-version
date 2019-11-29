@@ -42,17 +42,21 @@ Toolkit.run(async tools => {
   try {
     const current = pkg.version.toString();
     // set git user
-    await tools.runInWorkspace("git", ["config", "user.name", '"Manuel-777"']);
+    await tools.runInWorkspace("git", ["config", "user.name", '"mtgatool-bot"']);
     await tools.runInWorkspace("git", [
       "config",
       "user.email",
-      '"manuel.etchegaray7@gmail.com"'
+      '"mtgatool@gmail.com"'
     ]);
 
     const currentBranch = /refs\/[a-zA-Z]+\/(.*)/.exec(
       process.env.GITHUB_REF
     )[1];
     console.log("currentBranch:", currentBranch);
+
+    if (currentBranch !== "master") {
+      tools.exit.success("Not in master!");
+    }
 
     // now go to the actual branch to perform the same versioning
     await tools.runInWorkspace("git", ["checkout", currentBranch]);
