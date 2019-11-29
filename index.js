@@ -42,11 +42,11 @@ Toolkit.run(async tools => {
   try {
     const current = pkg.version.toString();
     // set git user
-    await tools.runInWorkspace("git", ["config", "user.name", '"mtgatool"']);
+    await tools.runInWorkspace("git", ["config", "user.name", '"Manuel-777"']);
     await tools.runInWorkspace("git", [
       "config",
       "user.email",
-      '"mtgatool@gmail.com"'
+      '"manuel.etchegaray7@gmail.com"'
     ]);
 
     const currentBranch = /refs\/[a-zA-Z]+\/(.*)/.exec(
