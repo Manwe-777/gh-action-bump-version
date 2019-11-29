@@ -19,14 +19,26 @@ Toolkit.run(async tools => {
     return;
   }
 
-  let version = "patch";
+  let version = "";
+  if (messages.map(message => message.includes("bump")).includes(true)) {
+    // Only for the metadata script
+    // "Breaking" sounds bad :)
+    version = "major";
+  }
   if (messages.map(message => message.includes("breaking")).includes(true)) {
     version = "major";
   }
   if (messages.map(message => message.includes("feature")).includes(true)) {
     version = "minor";
   }
+  if (messages.map(message => message.includes("fix")).includes(true)) {
+    version = "patch";
+  }
 
+  if (version == "") {
+    tools.exit.success("Bump not requested.");
+  }
+  
   try {
     const current = pkg.version.toString();
     // set git user
