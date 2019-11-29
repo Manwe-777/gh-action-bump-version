@@ -20,7 +20,7 @@ Toolkit.run(async tools => {
   }
 
   let version = "";
-  if (messages.map(message => message.includes("bump")).includes(true)) {
+  if (messages.map(message => message.includes("autobump")).includes(true)) {
     // Only for the metadata script
     // "Breaking" sounds bad :)
     version = "major";
