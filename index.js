@@ -20,19 +20,19 @@ Toolkit.run(async tools => {
   }
 
   let version = "";
-  if (messages.map(message => message.includes("autobump")).includes(true)) {
-    // Only for the metadata script
-    // "Breaking" sounds bad :)
-    version = "major";
-  }
-  if (messages.map(message => message.includes("breaking")).includes(true)) {
-    version = "major";
+  if (messages.map(message => message.includes("fix")).includes(true)) {
+    version = "patch";
   }
   if (messages.map(message => message.includes("feature")).includes(true)) {
     version = "minor";
   }
-  if (messages.map(message => message.includes("fix")).includes(true)) {
-    version = "patch";
+  if (messages.map(message => message.includes("breaking")).includes(true)) {
+    version = "major";
+  }
+  if (messages.map(message => message.includes("autobump")).includes(true)) {
+    // Only for the metadata script
+    // "Breaking" sounds bad :)
+    version = "major";
   }
 
   if (version == "") {
