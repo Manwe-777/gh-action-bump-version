@@ -48,12 +48,8 @@ Toolkit.run(async tools => {
   try {
     const current = pkg.version.toString();
     // set git user
-    await tools.runInWorkspace("git", ["config", "user.name", '"mtgatool-bot"']);
-    await tools.runInWorkspace("git", [
-      "config",
-      "user.email",
-      '"mtgatool@gmail.com"'
-    ]);
+    await tools.runInWorkspace('git', ['config', 'user.name', `"${process.env.GITHUB_USER || 'mtgatool-bot'}"`])
+    await tools.runInWorkspace('git', ['config', 'user.email', `"${process.env.GITHUB_EMAIL || 'mtgatool@gmail.com'}"`])
 
     const currentBranch = /refs\/[a-zA-Z]+\/(.*)/.exec(
       process.env.GITHUB_REF
