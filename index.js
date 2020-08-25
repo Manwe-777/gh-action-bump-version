@@ -29,7 +29,13 @@ Toolkit.run(async tools => {
   if (messages.map(message => message.includes("fix")).includes(true)) {
     version = "patch";
   }
+  if (messages.map(message => message.includes("patch")).includes(true)) {
+    version = "patch";
+  }
   if (messages.map(message => message.includes("feature")).includes(true)) {
+    version = "minor";
+  }
+  if (messages.map(message => message.includes("minor")).includes(true)) {
     version = "minor";
   }
   if (messages.map(message => message.includes("breaking")).includes(true)) {
