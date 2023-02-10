@@ -41,11 +41,6 @@ Toolkit.run(async tools => {
   if (messages.map(message => message.includes("breaking")).includes(true)) {
     version = "major";
   }
-  if (messages.map(message => message.includes("autobump")).includes(true)) {
-    // Only for the metadata script
-    // "Breaking" sounds bad :)
-    version = "major";
-  }
 
   if (version == "") {
     tools.exit.success("Bump not requested.");
