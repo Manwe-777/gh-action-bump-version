@@ -86,7 +86,7 @@ Toolkit.run(async tools => {
       `ci: ${commitMessage} ${newVersion}`
     ]);
 
-    const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
+    const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GH_TOKEN || process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
     // console.log(Buffer.from(remoteRepo).toString('base64'))
     await tools.runInWorkspace("git", ["tag", newVersion]);
     await tools.runInWorkspace("git", ["push", remoteRepo, "--follow-tags"]);
