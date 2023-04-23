@@ -29,26 +29,26 @@ Toolkit.run(async tools => {
   if (messages.map(message => message.includes("fix")).includes(true)) {
     version = "patch";
   }
-  if (messages.map(message => message.includes("patch")).includes(true)) {
+  else if (messages.map(message => message.includes("patch")).includes(true)) {
     version = "patch";
   }
-  if (messages.map(message => message.includes("feature")).includes(true)) {
+  else if (messages.map(message => message.includes("feature")).includes(true)) {
     version = "minor";
   }
-  if (messages.map(message => message.includes("minor")).includes(true)) {
+  else if (messages.map(message => message.includes("minor")).includes(true)) {
     version = "minor";
   }
-  if (messages.map(message => message.includes("breaking")).includes(true)) {
+  else if (messages.map(message => message.includes("breaking")).includes(true)) {
     version = "major";
   }
-  if (messages.map(message => message.includes("bump")).includes(true)) {
+  else if (messages.map(message => message.includes("bump")).includes(true)) {
     version = "major";
   }
 
   if (version == "") {
     tools.exit.success("Bump not requested.");
   }
-  
+
   try {
     const current = pkg.version.toString();
     // set git user
