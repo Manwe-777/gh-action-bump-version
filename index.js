@@ -1,16 +1,23 @@
-const { Toolkit } = require("actions-toolkit");
-const { execSync } = require("child_process");
+const { execSync, spawn } = require('child_process');
+const { existsSync } = require('fs');
+const { EOL } = require('os');
+const path = require('path');
 
-// Change working directory if user defined PACKAGEJSON_DIR
 if (process.env.PACKAGEJSON_DIR) {
-  process.env.GITHUB_WORKSPACE = `${process.env.GITHUB_WORKSPACE}/${process.env.PACKAGEJSON_DIR}`
-  process.chdir(process.env.GITHUB_WORKSPACE)
+  process.env.GITHUB_WORKSPACE = `${process.env.GITHUB_WORKSPACE}/${process.env.PACKAGEJSON_DIR}`;
+  process.chdir(process.env.GITHUB_WORKSPACE);
+} else if (process.env.INPUT_PACKAGEJSON_DIR) {
+  process.env.GITHUB_WORKSPACE = `${process.env.GITHUB_WORKSPACE}/${process.env.INPUT_PACKAGEJSON_DIR}`;
+  process.chdir(process.env.GITHUB_WORKSPACE);
 }
 
+console.log('process.env.GITHUB_WORKSPACE', process.env.GITHUB_WORKSPACE);
+const workspace = process.env.GITHUB_WORKSPACE;
+const pkg = getPackageJson();
+
 // Run your GitHub Action!
-Toolkit.run(async tools => {
-  const pkg = tools.getPackageJSON();
-  const event = tools.context.payload;
+(async () => {
+  const event = process.env.GITHUB_EVENT_PATH ? require(process.env.GITHUB_EVENT_PATH) : {};
 
   const messages = event.commits.map(
     commit => commit.message + "\n" + commit.body
@@ -21,7 +28,7 @@ Toolkit.run(async tools => {
     .map(message => message.toLowerCase().includes(commitMessage))
     .includes(true);
   if (isVersionBump) {
-    tools.exit.success("No action necessary!");
+    exitSuccess("No action necessary!");
     return;
   }
 
@@ -46,7 +53,7 @@ Toolkit.run(async tools => {
   }
 
   if (version == "") {
-    tools.exit.success("Bump not requested.");
+    exitSuccess("Bump not requested.");
   }
 
   try {
@@ -63,7 +70,7 @@ Toolkit.run(async tools => {
     console.log("currentBranch:", currentBranch);
 
     if (currentBranch !== "master") {
-      tools.exit.success("Not in master!");
+      exitSuccess("Not in master!");
     }
 
     // now go to the actual branch to perform the same versioning
@@ -95,11 +102,31 @@ Toolkit.run(async tools => {
     await runInWorkspace("git", ["push", remoteRepo, "--follow-tags"]);
     await runInWorkspace("git", ["push", remoteRepo, "--tags"]);
   } catch (e) {
-    tools.log.fatal(e);
-    tools.exit.failure("Failed to bump version");
+    logError(e);
+    exitFailure("Failed to bump version");
   }
-  tools.exit.success("Version bumped!");
+  exitSuccess("Version bumped!");
 });
+
+function getPackageJson() {
+  const pathToPackage = path.join(workspace, 'package.json');
+  if (!existsSync(pathToPackage)) throw new Error("package.json could not be found in your project's root.");
+  return require(pathToPackage);
+}
+
+function exitSuccess(message) {
+  console.info(`✔  success   ${message}`);
+  process.exit(0);
+}
+
+function exitFailure(message) {
+  logError(message);
+  process.exit(1);
+}
+
+function logError(error) {
+  console.error(`✖  fatal     ${error.stack || error}`);
+}
 
 function runInWorkspace(command, args) {
   return new Promise((resolve, reject) => {
