@@ -106,7 +106,7 @@ const pkg = getPackageJson();
     exitFailure("Failed to bump version");
   }
   exitSuccess("Version bumped!");
-});
+})();
 
 function getPackageJson() {
   const pathToPackage = path.join(workspace, 'package.json');
