@@ -54,8 +54,8 @@ Toolkit.run(async tools => {
     // set git user
     console.log(process.env.GITHUB_USER || 'mtgatool-bot');
     console.log(process.env.GITHUB_EMAIL || 'mtgatool@gmail.com');
-    await tools.runInWorkspace('git', ['config', 'user.name', `"${process.env.GITHUB_USER || 'mtgatool-bot'}"`])
-    await tools.runInWorkspace('git', ['config', 'user.email', `"${process.env.GITHUB_EMAIL || 'mtgatool@gmail.com'}"`])
+    await runInWorkspace('git', ['config', 'user.name', `"${process.env.GITHUB_USER || 'mtgatool-bot'}"`])
+    await runInWorkspace('git', ['config', 'user.email', `"${process.env.GITHUB_EMAIL || 'mtgatool@gmail.com'}"`])
 
     const currentBranch = /refs\/[a-zA-Z]+\/(.*)/.exec(
       process.env.GITHUB_REF
@@ -67,8 +67,8 @@ Toolkit.run(async tools => {
     }
 
     // now go to the actual branch to perform the same versioning
-    await tools.runInWorkspace("git", ["checkout", currentBranch]);
-    await tools.runInWorkspace("npm", [
+    await runInWorkspace("git", ["checkout", currentBranch]);
+    await runInWorkspace("npm", [
       "version",
       "--allow-same-version=true",
       "--git-tag-version=false",
@@ -82,7 +82,7 @@ Toolkit.run(async tools => {
     newVersion = `${process.env["INPUT_TAG-PREFIX"]}${newVersion}`;
     console.log("new version:", newVersion);
 
-    await tools.runInWorkspace("git", [
+    await runInWorkspace("git", [
       "commit",
       "-a",
       "-m",
@@ -91,12 +91,38 @@ Toolkit.run(async tools => {
 
     const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GH_TOKEN || process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
     // console.log(Buffer.from(remoteRepo).toString('base64'))
-    await tools.runInWorkspace("git", ["tag", newVersion]);
-    await tools.runInWorkspace("git", ["push", remoteRepo, "--follow-tags"]);
-    await tools.runInWorkspace("git", ["push", remoteRepo, "--tags"]);
+    await runInWorkspace("git", ["tag", newVersion]);
+    await runInWorkspace("git", ["push", remoteRepo, "--follow-tags"]);
+    await runInWorkspace("git", ["push", remoteRepo, "--tags"]);
   } catch (e) {
     tools.log.fatal(e);
     tools.exit.failure("Failed to bump version");
   }
   tools.exit.success("Version bumped!");
 });
+
+function runInWorkspace(command, args) {
+  return new Promise((resolve, reject) => {
+    console.log('runInWorkspace | command:', command, 'args:', args);
+    const child = spawn(command, args, { cwd: workspace });
+    let isDone = false;
+    const errorMessages = [];
+    child.on('error', (error) => {
+      if (!isDone) {
+        isDone = true;
+        reject(error);
+      }
+    });
+    child.stderr.on('data', (chunk) => errorMessages.push(chunk));
+    child.on('exit', (code) => {
+      if (!isDone) {
+        if (code === 0) {
+          resolve();
+        } else {
+          reject(`${errorMessages.join('')}${EOL}${command} exited with code ${code}`);
+        }
+      }
+    });
+  });
+  //return execa(command, args, { cwd: workspace });
+}
